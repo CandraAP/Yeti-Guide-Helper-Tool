@@ -1,0 +1,185 @@
+global float $g_Weight = 0; 	
+global float $g_LengthWeight = 0; 	
+global float $g_InnerRadius = 0; 
+global float $g_OuterRadius = 0; 
+global float $g_Density = 0; 
+global float $g_BaseAttraction = 0;  	
+global float $g_TipAttraction = 0; 
+global float $g_AttractionBias = 0; 
+global float $g_RandomAttraction = 0; 
+global float $g_Twist = 0; 
+//global float $g_SurfaceDirectionLimit = 0; 	
+//global float $g_SurfaceDirectionLimitFalloff = 0; 
+
+CAP_Yeti_Helper_Tool();
+
+global proc CAP_Yeti_Helper_Tool()
+{
+	global float $g_Weight; 	
+	global float $g_LengthWeight;	
+	global float $g_InnerRadius; 	
+	global float $g_OuterRadius; 	
+	global float $g_Density;	
+	global float $g_BaseAttraction; 	
+	global float $g_TipAttraction; 	
+	global float $g_AttractionBias;	
+	global float $g_RandomAttraction;
+	global float $g_Twist; 	
+	//global float $g_SurfaceDirectionLimit; 	
+	//global float $g_SurfaceDirectionLimitFalloff;
+	
+    if(`window -q -exists CAP_tool_YetiGuide_window`) deleteUI CAP_tool_YetiGuide_window;
+    
+    window -s 0 -title "Yeti Guide Helper Tool" -maximizeButton 0 -minimizeButton 1 CAP_tool_YetiGuide_window;
+    
+    columnLayout;
+	
+    frameLayout -label "Yeti Guide Helper Tool v1.0"  -bgc 0.25 0.25 0.25 -fn "tinyBoldLabelFont" ;
+	
+	separator -style "in";
+   
+	button -h 23 -l "GET ATTRIBUTES FROM A GUIDE (OPTIONAL)" -bgc 0.2 0.2 0.2 -c "CAP_GetAGuideSampleAttributes()";
+	
+	separator -style "in";
+	
+    floatSliderGrp -label "Weight : " -field true -fieldMinValue -1000000 -fieldMaxValue 1000000 -minValue -10 -maxValue 10 -value $g_Weight Y_Weight;
+	
+	floatSliderGrp -label "Length Weight : " -field true -fieldMinValue -1000000 -fieldMaxValue 1000000 -minValue -10 -maxValue 10 -value $g_LengthWeight Y_LengthWeight;
+	
+	floatSliderGrp -label "Inner Radius : " -field true -fieldMinValue -1000000 -fieldMaxValue 1000000 -minValue -10 -maxValue 10 -value $g_InnerRadius Y_InnerRadius;
+	
+	floatSliderGrp -label "Outer Radius : " -field true -fieldMinValue -1000000 -fieldMaxValue 1000000 -minValue -10 -maxValue 10 -value $g_OuterRadius Y_OuterRadius;
+	
+	floatSliderGrp -label "Density : " -field true -fieldMinValue -1000000 -fieldMaxValue 1000000 -minValue -10 -maxValue 10 -value $g_Density Y_Density;
+	
+	floatSliderGrp -label "Base Attraction : " -field true -fieldMinValue -1000000 -fieldMaxValue 1000000 -minValue -10 -maxValue 10 -value $g_BaseAttraction Y_BaseAttraction;
+	
+	floatSliderGrp -label "Tip Attraction : " -field true -fieldMinValue -1000000 -fieldMaxValue 1000000 -minValue -10 -maxValue 10 -value $g_TipAttraction Y_TipAttraction;
+	
+	floatSliderGrp -label "Attraction Bias : " -field true -fieldMinValue -1000000 -fieldMaxValue 1000000 -minValue -10 -maxValue 10 -value $g_AttractionBias Y_AttractionBias;
+	
+	floatSliderGrp -label "Random Attraction : " -field true -fieldMinValue -1000000 -fieldMaxValue 1000000 -minValue -10 -maxValue 10 -value $g_RandomAttraction Y_RandomAttraction;
+	
+	floatSliderGrp -label "Twist : " -field true -fieldMinValue -1000000 -fieldMaxValue 1000000 -minValue -10 -maxValue 10 -value $g_Twist Y_Twist;
+	
+	//floatSliderGrp -label "Surface Direction Limit : " -field true -fieldMinValue -1000000 -fieldMaxValue 1000000 -minValue -10 -maxValue 10 -value $g_SurfaceDirectionLimit Y_SurfaceDirectionLimit;
+	
+	//floatSliderGrp -label "Surface Direction Limit Falloff : " -field true -fieldMinValue -1000000 -fieldMaxValue 1000000 -minValue -10 -maxValue 10 -value $g_SurfaceDirectionLimitFalloff Y_SurfaceDirectionLimitFalloff;
+    
+	separator -style "in";
+	
+	button -h 23 -l "RESET ATTRIBUTES" -bgc 0.2 0.2 0.2 -c "CAP_ResetAttributesValue()";
+	
+	separator -style "in";
+	
+	button -h 23 -l "APPLY ATTRIBUTES TO GUIDE (S)" -bgc 0.2 0.2 0.2 -c "CAP_Processing()";
+	
+    separator -style "in";
+	
+	frameLayout -label "Candra Agung P © Yuyevon777@gmail.com (2019)"  -bgc 0.25 0.25 0.25 -fn "tinyBoldLabelFont" ;
+    
+    showWindow;	
+};
+
+global proc CAP_GetAGuideSampleAttributes()
+{
+	global float $g_Weight; 	
+	global float $g_LengthWeight;	
+	global float $g_InnerRadius; 	
+	global float $g_OuterRadius; 	
+	global float $g_Density;	
+	global float $g_BaseAttraction; 	
+	global float $g_TipAttraction; 	
+	global float $g_AttractionBias;	
+	global float $g_RandomAttraction;
+	global float $g_Twist; 	
+	//global float $g_SurfaceDirectionLimit; 	
+	//global float $g_SurfaceDirectionLimitFalloff;
+
+	string $Objects[] = `ls -selection`;
+	
+	for($Item in $Objects)
+	{
+		string $getShapes[] = `listRelatives -shapes $Item`;
+		$g_Weight = `getAttr ($getShapes[0] + ".weight")`; 	
+		$g_LengthWeight = `getAttr ($getShapes[0] + ".lengthWeight")`; 	
+		$g_InnerRadius = `getAttr ($getShapes[0] + ".innerRadius")`; 
+		$g_OuterRadius = `getAttr ($getShapes[0] + ".outerRadius")`;  
+		$g_Density = `getAttr ($getShapes[0] + ".density")`;  
+		$g_BaseAttraction = `getAttr ($getShapes[0] + ".baseAttraction")`;  	
+		$g_TipAttraction = `getAttr ($getShapes[0] + ".tipAttraction")`; 
+		$g_AttractionBias = `getAttr ($getShapes[0] + ".attractionBias")`;  
+		$g_RandomAttraction = `getAttr ($getShapes[0] + ".randomAttraction")`; 
+		$g_Twist = `getAttr ($getShapes[0] + ".twist")`;  
+		//$g_SurfaceDirectionLimit = `getAttr ($getShapes[0] + ".surfaceDirectionLimit")`; 	
+		//$g_SurfaceDirectionLimitFalloff = `getAttr ($getShapes[0] + ".surfaceDirectionLimitFalloff")`;  
+	}
+	
+	CAP_Yeti_Helper_Tool();
+}
+
+global proc CAP_ResetAttributesValue()
+{
+	global float $g_Weight; 	
+	global float $g_LengthWeight;	
+	global float $g_InnerRadius; 	
+	global float $g_OuterRadius; 	
+	global float $g_Density;	
+	global float $g_BaseAttraction; 	
+	global float $g_TipAttraction; 	
+	global float $g_AttractionBias;	
+	global float $g_RandomAttraction;
+	global float $g_Twist; 	
+	//global float $g_SurfaceDirectionLimit; 	
+	//global float $g_SurfaceDirectionLimitFalloff;
+	
+	$g_Weight = 0; 	
+	$g_LengthWeight = 0; 	
+	$g_InnerRadius = 0; 
+	$g_OuterRadius = 0; 
+	$g_Density = 0; 
+	$g_BaseAttraction = 0;  	
+	$g_TipAttraction = 0; 
+	$g_AttractionBias = 0; 
+	$g_RandomAttraction = 0; 
+	$g_Twist = 0; 
+	//$g_SurfaceDirectionLimit = 0; 	
+	//$g_SurfaceDirectionLimitFalloff = 0; 
+	
+	CAP_Yeti_Helper_Tool();
+}
+
+global proc CAP_Processing()
+{
+	float $y_Weight = `floatSliderGrp -q -value Y_Weight`; 	
+	float $y_LengthWeight = `floatSliderGrp -q -value Y_LengthWeight`; 	
+	float $y_InnerRadius = `floatSliderGrp -q -value Y_InnerRadius`; 	
+	float $y_OuterRadius = `floatSliderGrp -q -value Y_OuterRadius`; 	
+	float $y_Density = `floatSliderGrp -q -value Y_Density`; 	
+	float $y_BaseAttraction = `floatSliderGrp -q -value Y_BaseAttraction`; 	
+	float $y_TipAttraction = `floatSliderGrp -q -value Y_TipAttraction`; 	
+	float $y_AttractionBias = `floatSliderGrp -q -value Y_AttractionBias`;	
+	float $y_RandomAttraction = `floatSliderGrp -q -value Y_RandomAttraction`;	
+	float $y_Twist = `floatSliderGrp -q -value Y_Twist`; 	
+	//float $y_SurfaceDirectionLimit = `floatSliderGrp -q -value Y_SurfaceDirectionLimit`; 	
+	//float $y_SurfaceDirectionLimitFalloff = `floatSliderGrp -q -value Y_SurfaceDirectionLimitFalloff`; 
+	
+	string $Objects[] = `ls -selection`;
+	
+	for($Item in $Objects)
+	{
+		string $getShapes[] = `listRelatives -shapes $Item`;
+		setAttr ($getShapes[0] + ".weight") ($y_Weight);
+		setAttr ($getShapes[0] + ".lengthWeight") ($y_LengthWeight);
+		setAttr ($getShapes[0] + ".innerRadius") ($y_InnerRadius);
+		setAttr ($getShapes[0] + ".outerRadius") ($y_OuterRadius);
+		setAttr ($getShapes[0] + ".density") ($y_Density);
+		setAttr ($getShapes[0] + ".baseAttraction") ($y_BaseAttraction);
+		setAttr ($getShapes[0] + ".tipAttraction") ($y_TipAttraction);
+		setAttr ($getShapes[0] + ".attractionBias") ($y_AttractionBias);
+		setAttr ($getShapes[0] + ".randomAttraction") ($y_RandomAttraction);
+		setAttr ($getShapes[0] + ".twist") ($y_Twist);
+		//setAttr ($getShapes[0] + ".surfaceDirectionLimit") ($y_SurfaceDirectionLimit);
+		//setAttr ($getShapes[0] + ".surfaceDirectionLimitFalloff") ($y_SurfaceDirectionLimitFalloff);
+	}
+};
