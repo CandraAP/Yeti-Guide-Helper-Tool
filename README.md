@@ -6,5 +6,6 @@ Tested on Maya 2018 & 2019
 
 How to use:
 - Put CAP_Yeti_Tools.mel into C:\Users\YourName\Documents\maya\201#\scripts\
+- Open Maya.
 - Run MEL Command CAP_Yeti_Tools(); from console.
 - Done.
