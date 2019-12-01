@@ -1,0 +1,1202 @@
+CAP_Yeti_Tools();
+
+global proc CAP_Yeti_Tools()
+{
+    if(`window -q -exists CAP_Tool`) 
+	{
+		deleteUI CAP_Tool;
+	};
+	
+	window -s 1 -t "CAP's Yeti Tool v1.05" -mxb 0 -mnb 1 -rtf true CAP_Tool;
+	tabLayout tabList;
+		// --- Yeti ---
+		string $tabYeti = `columnLayout`;
+		frameLayout -label "Yeti Guide Tool"  -bgc 0.25 0.25 0.25 -fn "tinyBoldLabelFont" ;
+			separator -style "in";
+			button -h 23 -l "GET GUIDE ATTRIBUTES" -bgc 0.2 0.2 0.2 -c "CAP_GuideTool_GetAttributes()";   
+			separator -style "in";
+			floatSliderGrp -label "Weight : " -field true -pre 3 -fieldMinValue -1000000 -fieldMaxValue 1000000 -minValue -10 -maxValue 10 -value 1.000 sliderWeightVal;
+			floatSliderGrp -label "Length Weight : " -field true -pre 3 -fieldMinValue -1000000 -fieldMaxValue 1000000 -minValue -10 -maxValue 10 -value 1.000 sliderLengthWeightVal;
+			floatSliderGrp -label "Inner Radius : " -field true -pre 3 -fieldMinValue -1000000 -fieldMaxValue 1000000 -minValue -10 -maxValue 10 -value 0.000 sliderInnerRadiusVal;
+			floatSliderGrp -label "Outer Radius : " -field true -pre 3 -fieldMinValue -1000000 -fieldMaxValue 1000000 -minValue -10 -maxValue 10 -value 2.000 sliderOuterRadiusVal;
+			floatSliderGrp -label "Density : " -field true -pre 3 -fieldMinValue -1000000 -fieldMaxValue 1000000 -minValue -10 -maxValue 10 -value 1.000 sliderDensityVal;
+			floatSliderGrp -label "Base Attraction : " -field true -pre 3 -fieldMinValue -1000000 -fieldMaxValue 1000000 -minValue -10 -maxValue 10 -value 0.000 sliderBaseAttractionVal;
+			floatSliderGrp -label "Tip Attraction : " -field true -pre 3 -fieldMinValue -1000000 -fieldMaxValue 1000000 -minValue -10 -maxValue 10 -value 0.000 sliderTipAttractionVal;
+			floatSliderGrp -label "Attraction Bias : " -field true -pre 3 -fieldMinValue -1000000 -fieldMaxValue 1000000 -minValue -10 -maxValue 10 -value 0.000 sliderAttractionBiasVal;
+			floatSliderGrp -label "Random Attraction : " -field true -pre 3 -fieldMinValue -1000000 -fieldMaxValue 1000000 -minValue -10 -maxValue 10 -value 0.000 sliderRandomAttractionVal;
+			floatSliderGrp -label "Twist : " -field true -pre 3 -fieldMinValue -1000000 -fieldMaxValue 1000000 -minValue -10 -maxValue 10 -value 0.000 sliderTwistVal;
+			separator -style "in";
+			button -h 23 -l "RESET" -bgc 0.2 0.2 0.2 -c "CAP_GuideTool_Reset()";
+			button -h 23 -l "APPLY" -bgc 0.2 0.2 0.2 -c "CAP_GuideTool_Apply()";
+			setParent..;
+		setParent..;		
+		
+		// --- Set ---
+		string $tabSetHelper = `columnLayout`;
+		frameLayout -label "Set Tool" -width 390  -bgc 0.25 0.25 0.25 -fn "tinyBoldLabelFont" ;
+				separator -style "in";
+				text -label "   CREATE SET" -bgc 0 0 0 -h 20 -al "left";
+				separator -style "in";				
+				rowColumnLayout -numberOfColumns 3 -cw 1 60 -cw 2 240 -cw 3 85;
+					text -label "SET NAME";
+					textField -text "" textFieldSetName;
+					button -l "CREATE SET" -h 30 -bgc 0.15 0.15 0.15 -c "CAP_SetTool_CreateSet()";
+				setParent..;				
+				separator -style "in";				
+				text -label "   MODIFY SET" -bgc 0 0 0 -h 20 -al "left";
+				separator -style "in";				
+				rowColumnLayout -numberOfColumns 3 -cw 1 60 -cw 2 240 -cw 3 85;
+					text -label "SET NAME";
+					textField -text "" textFieldSetTargetName;
+					button -l "SELECT SET" -h 30 -bgc 0.15 0.15 0.15 -c "CAP_SetTool_SelectTargetSet()";
+				setParent..;
+				button -l "HIGHLIGHT MEMBER" -bgc 0.2 0.2 0.2 -c "CAP_SetTool_HighlightTargetSet()";
+				button -l "ADD OBJECT(S) TO SET" -bgc 0.2 0.2 0.2 -c "CAP_SetTool_AddSelectedObjects()";						
+				button -l "REMOVE SELECTED MEMBER" -bgc 0.2 0.2 0.2 -c "CAP_SetTool_RemoveSelectedObjects()";				
+				separator -style "in";
+				text -label "   SINGLE OBJECT UTILITY" -bgc 0 0 0 -h 20 -al "left";
+				separator -style "in";				
+				button -l "REMOVE SELECTED OBJECT FROM SET" -bgc 0.2 0.2 0.2 -c "CAP_SetTool_RemoveSelectedObjectFromList()";
+				button -l "HIGHLIGHT SET OF SELECTED OBJECT" -bgc 0.2 0.2 0.2 -c "CAP_SetTool_SelectSetListOfSelectedObject()";
+			setParent..;
+		setParent..;
+		
+		// --- YetiNode ---
+		string $tabYetiNode = `columnLayout`;
+		frameLayout -label "Yeti Node Tool"  -bgc 0.25 0.25 0.25 -fn "tinyBoldLabelFont" ;
+			separator -style "in";
+			button -h 23 -l "GET YETINODE ATTRIBUTES" -bgc 0.2 0.2 0.2 -c "CAP_YetiNode_GetAttributes()";  
+			separator -style "in"; 
+			checkBoxGrp -label1 "Display Output" -value1 1 checkDisplayOutput;
+			separator -style "in";
+			floatSliderGrp -label "Viewport Density : " -field true -pre 3 -fieldMinValue 0 -fieldMaxValue 1000000 -minValue 0 -maxValue 10 -value 0.100 sliderViewportDensityVal;
+			floatSliderGrp -label "Viewport Length : " -field true -pre 3 -fieldMinValue 0 -fieldMaxValue 1000000 -minValue 0 -maxValue 10 -value 1.000 sliderViewportLengthVal;
+			floatSliderGrp -label "Viewport Width : " -field true -pre 3 -fieldMinValue 0 -fieldMaxValue 1000000 -minValue 0 -maxValue 10 -value 1.000 sliderViewportWidthVal;
+			separator -style "in";
+			floatSliderGrp -label "Render Density : " -field true -pre 3 -fieldMinValue 0 -fieldMaxValue 1000000 -minValue 0 -maxValue 100 -value 10.000 sliderRenderDensityVal;
+			floatSliderGrp -label "Render Length : " -field true -pre 3 -fieldMinValue 0 -fieldMaxValue 1000000 -minValue 0 -maxValue 10 -value 1.000 sliderRenderLengthVal;
+			floatSliderGrp -label "Render Width : " -field true -pre 3 -fieldMinValue 0 -fieldMaxValue 1000000 -minValue 0 -maxValue 10 -value 1.000 sliderRenderWidthVal;
+			separator -style "in";
+			button -h 23 -l "RESET" -bgc 0.2 0.2 0.2 -c "CAP_YetiNode_Reset()";
+			button -h 23 -l "APPLY" -bgc 0.2 0.2 0.2 -c "CAP_YetiNode_Apply()";
+			setParent..;
+		setParent..;
+		
+		// --- YetiGraphRenamer ---
+		string $tabYetiGraphRenamer = `columnLayout`;
+		frameLayout -label "Yeti Graph Auto Renamer"  -bgc 0.25 0.25 0.25 -fn "tinyBoldLabelFont" ;
+				separator -style "in";
+				text -label "   YETINODE SHAPE" -bgc 0 0 0 -h 20 -al "left";
+				rowColumnLayout -numberOfColumns 3 -cw 1 60 -cw 2 240 -cw 3 85;
+					text -label "YETINODE";
+					textField -text "" -bgc 0.1 0.1 0.1 tfHairNode;
+					button -l "SELECT NODE" -bgc 0.2 0.2 0.2 -c "CAP_YetiRenamer_SelectYetiNode()";
+				setParent..;				
+				separator -style "in";
+				text -label "   NAME" -bgc 0 0 0 -h 20 -al "left";				
+				rowColumnLayout -numberOfColumns 2 -cw 1 60 -cw 2 330;
+					text -label "NAME";
+					textField -text "" -bgc 0.2 0.2 0.2 tfHairName;
+				setParent..;			
+				rowColumnLayout -numberOfColumns 6 -cw 1 60 -cw 2 90 -cw 3 60 -cw 4 90 -cw 5 60 -cw 6 20;
+					text -label "Prefix";
+					textField -text "" -bgc 0.2 0.2 0.2 tfHairPrefix;
+					text -label "Suffix";
+					textField -text "" -bgc 0.2 0.2 0.2 tfHairSuffix;
+					text -label "Separator";
+					textField -text "_" -bgc 0.2 0.2 0.2 tfHairSeparator;
+				setParent..;				
+				separator -style "in";				
+				text -label "   TEMPLATE NAME" -bgc 0 0 0 -h 20 -al "left";
+				scrollLayout -w 390 -h 100 -horizontalScrollBarThickness 16 -verticalScrollBarThickness 16;
+					rowColumnLayout -numberOfColumns 2 -cw 1 120 -cw 2 250;
+						text -al "left" -label "  Import (Geometry)"; textField -text "igeometry" -bgc 0.2 0.2 0.2 tfRenameImportGeometry;	
+						text -al "left" -label "  Import (Groom)"; textField -text "igroom" -bgc 0.2 0.2 0.2 tfRenameImportGroom;
+						text -al "left" -label "  Import (Guide)"; textField -text "iguide" -bgc 0.2 0.2 0.2 tfRenameImportGuide;
+						text -al "left" -label "  Import (Feather)"; textField -text "ifeather" -bgc 0.2 0.2 0.2 tfRenameImportFeather;
+						text -al "left" -label "  Import (Braid)"; textField -text "ibraid" -bgc 0.2 0.2 0.2 tfRenameImportBraid;	
+						text -al "left" -label "  Reference"; textField -text "reference" -bgc 0.2 0.2 0.2 tfRenameReference;
+						text -al "left" -label "  File"; textField -text "file" -bgc 0.2 0.2 0.2 tfRenameFile;
+						text -al "left" -label "  Scatter"; textField -text "scatter" -bgc 0.2 0.2 0.2 tfRenameScatter;	
+						text -al "left" -label "  Grow"; textField -text "grow" -bgc 0.2 0.2 0.2 tfRenameGrow;	
+						text -al "left" -label "  Instance"; textField -text "instance" -bgc 0.2 0.2 0.2 tfRenameInstance;	
+						text -al "left" -label "  Attribute"; textField -text "attribute" -bgc 0.2 0.2 0.2 tfRenameAttribute;
+						text -al "left" -label "  Bend"; textField -text "bend" -bgc 0.2 0.2 0.2 tfRenameBend;	
+						text -al "left" -label "  Blend"; textField -text "blend" -bgc 0.2 0.2 0.2 tfRenameBlend;
+						text -al "left" -label "  Clumping"; textField -text "clumping" -bgc 0.2 0.2 0.2 tfRenameClumping;
+						text -al "left" -label "  Comb"; textField -text "comb" -bgc 0.2 0.2 0.2 tfRenameComb;
+						text -al "left" -label "  Convert"; textField -text "convert" -bgc 0.2 0.2 0.2 tfRenameConvert;
+						text -al "left" -label "  Curl"; textField -text "curl" -bgc 0.2 0.2 0.2 tfRenameCurl;
+						text -al "left" -label "  Direction"; textField -text "direction" -bgc 0.2 0.2 0.2 tfRenameDirection;
+						text -al "left" -label "  Displacement"; textField -text "displacement" -bgc 0.2 0.2 0.2 tfRenameDisplacement;
+						text -al "left" -label "  Group"; textField -text "group" -bgc 0.2 0.2 0.2 tfRenameGroup;
+						text -al "left" -label "  Guide"; textField -text "guide" -bgc 0.2 0.2 0.2 tfRenameGuide;
+						text -al "left" -label "  Merge"; textField -text "merge" -bgc 0.2 0.2 0.2 tfRenameMerge;
+						text -al "left" -label "  Motion"; textField -text "motion" -bgc 0.2 0.2 0.2 tfRenameMotion;
+						text -al "left" -label "  Scraggle"; textField -text "scraggle" -bgc 0.2 0.2 0.2 tfRenameScraggle;
+						text -al "left" -label "  Shader"; textField -text "shader" -bgc 0.2 0.2 0.2 tfRenameShader;
+						text -al "left" -label "  Switch"; textField -text "switch" -bgc 0.2 0.2 0.2 tfRenameSwitch;
+						text -al "left" -label "  Texture"; textField -text "texture" -bgc 0.2 0.2 0.2 tfRenameTexture;
+						text -al "left" -label "  Transform"; textField -text "transform" -bgc 0.2 0.2 0.2 tfRenameTransform;
+						text -al "left" -label "  Width"; textField -text "width" -bgc 0.2 0.2 0.2 tfRenameWidth;
+					setParent..;	
+				setParent..;
+				separator -style "in";				
+				text -label "   RENAME" -bgc 0 0 0 -h 20 -al "left";				
+				optionMenu -label "FORMAT : " -changeCommand "" omHairRenameFormat;
+				menuItem -label "prefix_name_##_nodetype_suffix" -parent omHairRenameFormat formatA;
+				menuItem -label "prefix_name_nodetype_##_suffix" -parent omHairRenameFormat formatB;
+				button -l "RENAME" -h 35 -bgc 0.2 0.2 0.2 -c "CAP_YetiRenamer_Rename()";
+			setParent..;
+		setParent..;
+		
+		// --- Utility ---
+		string $tabUtility = `columnLayout`;
+		frameLayout -label "Utility Tool"  -bgc 0.25 0.25 0.25 -fn "tinyBoldLabelFont" ;
+			separator -style "in";
+				scrollLayout -w 390 -h 370 -horizontalScrollBarThickness 16 -verticalScrollBarThickness 16;
+					frameLayout -cll 1 -cl 1 -label "3RD PARTY TOOL" -w 370  -bgc 0.25 0.25 0.25 -fn "tinyBoldLabelFont" ;										
+						frameLayout -cll 1 -cl 1 -label "Curve To Yeti Groom (yuriy.n.dulich@gmail.com)" -w 370  -bgc 0.25 0.25 0.25 -fn "tinyBoldLabelFont" ;
+							rowColumnLayout -numberOfColumns 2 -cw 1 80 -cw 2 320;								
+							text -l "Step Size:";
+							textField -tx "0.2" -ed true stSize;
+							setParent..;
+							button -l "Select Set than Poly object and press this" -bgc 0.2 0.2 0.2 -c "Yuriy_CreateGroom()";
+						setParent..;
+					setParent..;
+					frameLayout -cll 1 -cl 1 -label "UV & TEXTURE" -w 370  -bgc 0.25 0.25 0.25 -fn "tinyBoldLabelFont" ;
+						button -h 23  -l "Open 3D Paint Tool" -bgc 0.2 0.2 0.2 -c "CAP_UVTexture_3DPaintools()";	
+						separator -style "in";					
+						button -h 23  -l "Open UV Editor" -bgc 0.2 0.2 0.2 -c "CAP_UVTexture_OpenUVEditor()";
+						button -h 23  -l "Open UV Set Editor" -bgc 0.2 0.2 0.2 -c "CAP_UVTexture_OpenUVSetEditor()";						
+						separator -style "in";					
+						button -h 23  -l "Cut UV Edges" -bgc 0.2 0.2 0.2 -c "CAP_UVTexture_CutUV()";
+						button -h 23  -l "Sew UV Edges" -bgc 0.2 0.2 0.2 -c "CAP_UVTexture_SewUV()";
+						button -h 23  -l "Split UV" -bgc 0.2 0.2 0.2 -c "CAP_UVTexture_SplitUV()";					
+						separator -style "in";					
+						button -h 23  -l "Unfold" -bgc 0.2 0.2 0.2 -c "CAP_UVTexture_Unfold()";
+						button -h 23  -l "Optimize" -bgc 0.2 0.2 0.2 -c "CAP_UVTexture_Optimize()";
+					setParent..;
+					frameLayout -cll 1 -cl 1 -label "DEBUGGER" -w 370  -bgc 0.25 0.25 0.25 -fn "tinyBoldLabelFont" ;
+						button -h 23  -l "DEBUG - YETI AUTO RENAMER (MEMORY NAME)" -bgc 0.2 0.2 0.2 -c "CAP_DEBUG_YetiGraphAutoRenamerMemoryName()";
+					setParent..;
+				setParent..;
+			separator -style "in";
+			setParent..;
+		setParent..;
+		
+		// --- About ---
+		string $tabAbout = `columnLayout`;
+		frameLayout -w 390 -label "About"  -bgc 0.25 0.25 0.25 -fn "tinyBoldLabelFont" ;
+			separator -style "in";
+			text -label "----------------------------------------------" -h 20 -al "center";									
+			text -label "CAP'S YETI TOOLS V1.05" -h 20 -al "center";									
+			text -label "----------------------------------------------" -h 20 -al "center";
+			text -label " " -h 20 -al "center";					
+			text -label "Created by Candra Agung Prasetyo @ 2019" -h 20 -al "center";	
+			text -label " " -h 20 -al "center";							
+			text -label "shenlong_rexs@yahoo.co.id" -h 20 -al "center";	
+			text -label "yuyevon777@gmail.com" -h 20 -al "center";
+			text -label "https://github.com/CandraAP/Yeti-Guide-Helper-Tool" -h 20 -al "center";
+			text -label " " -h 20 -al "center";						
+			text -label "----------------------------------------------" -h 20 -al "center";	
+			button -h 50 -l "Go to my Github page!" -bgc 0.2 0.2 0.2 -c "CAP_About_OpenMyGithubPage()";
+			setParent..;
+		setParent..;		
+		
+	tabLayout -edit
+	-tabLabel $tabYeti "Guide"
+	-tabLabel $tabSetHelper "Set"
+	-tabLabel $tabYetiNode "Yeti Node"
+	-tabLabel $tabYetiGraphRenamer "Yeti Graph Renamer"
+	-tabLabel $tabUtility "Utility"
+	-tabLabel $tabAbout "About"
+	tabList;
+	
+	showWindow;
+}
+
+//---------------------------------------------------------------------------------------------------------------
+global proc CAP_About_OpenMyGithubPage()
+{
+	launch -web "https://github.com/CandraAP/Yeti-Guide-Helper-Tool";
+}
+
+//---------------------------------------------------------------------------------------------------------------
+global proc CAP_DEBUG_YetiGraphAutoRenamerMemoryName()
+{
+	string $hairNode = "";
+	$hairNode = `textField -q -text tfHairNode`;
+	
+	if($hairNode != "")
+	{
+		string $listOfNodes[] = GET_AllNodesOnYetiGraph($hairNode);
+		
+		if(size($listOfNodes)>0)
+		{
+			print "\n";
+			print "--DEBUG------------------------------------\n";	
+			print "TASK : GET Yeti Graph Auto Renamer Memory.\n";		
+			print "-------------------------------------------\n";
+			for($i=0;$i<size($listOfNodes);$i++)
+			{
+				string $val = $listOfNodes[$i] + "\n";
+				print $val;
+			}
+			print "-------------------------------------------";
+		}
+		
+		clear $listOfNodes;
+	}	
+}
+//---------------------------------------------------------------------------------------------------------------
+// yuriy.n.dulich@gmail.com
+// Usege: Select Curve Set than Poly object and type convCurv2GuideWind;
+
+global proc Yuriy_CreateGroom()
+{
+	string $sel[] = `ls -sl`;
+	float $sSize = `textField -q -tx stSize`;
+	string $shape[];
+	if(size($sel)==2){
+		$shape = `listRelatives -c -s  $sel[1]`;
+		pgYetiConvertGuideSetToGroom $sel[0] $shape[0] $sSize;
+	}
+	else{
+		print "// Warning! Not valid selected set and poly object\n";
+		confirmDialog -title "convCurv2GuideWind" -message "Warning! Not valid selected set and poly object!" -button "OK";
+	}
+	clear $sel;
+}
+//---------------------------------------------------------------------------------------------------------------
+global proc CAP_YetiRenamer_Rename()
+{
+	string $hairNode = "";
+	string $hairName = "";
+	$hairNode = `textField -q -text tfHairNode`;
+	$hairName = `textField -q -text tfHairName`;
+	
+	if($hairNode == "")
+	{
+		CAP_YetiRenamer_SelectYetiNode();
+	}
+	else
+	{
+		if($hairName == "")
+		{
+			confirmDialog -title "YETINODE RENAMER" -message "NAME is empty!" -button "OK";
+		}
+		else
+		{
+			string $imports[] = GET_NodesByTypeOnYetiGraph($hairNode,"import");
+			string $references[] = GET_NodesByTypeOnYetiGraph($hairNode,"reference");
+			string $files[] = GET_NodesByTypeOnYetiGraph($hairNode,"file");
+			string $scatters[] = GET_NodesByTypeOnYetiGraph($hairNode,"scatter");
+			string $grows[] = GET_NodesByTypeOnYetiGraph($hairNode,"grow");
+			string $instances[] = GET_NodesByTypeOnYetiGraph($hairNode,"instance");
+			string $attributes[] = GET_NodesByTypeOnYetiGraph($hairNode,"attribute");			
+			string $bends[] = GET_NodesByTypeOnYetiGraph($hairNode,"bend");
+			string $blends[] = GET_NodesByTypeOnYetiGraph($hairNode,"blend");
+			string $clumpings[] = GET_NodesByTypeOnYetiGraph($hairNode,"clumping");
+			string $combs[] = GET_NodesByTypeOnYetiGraph($hairNode,"comb");
+			string $converts[] = GET_NodesByTypeOnYetiGraph($hairNode,"convert");			
+			string $curls[] = GET_NodesByTypeOnYetiGraph($hairNode,"curl");
+			string $directions[] = GET_NodesByTypeOnYetiGraph($hairNode,"direction");
+			string $displacements[] = GET_NodesByTypeOnYetiGraph($hairNode,"displacement");
+			string $groups[] = GET_NodesByTypeOnYetiGraph($hairNode,"group");
+			string $guides[] = GET_NodesByTypeOnYetiGraph($hairNode,"guide");			
+			string $merges[] = GET_NodesByTypeOnYetiGraph($hairNode,"merge");
+			string $motions[] = GET_NodesByTypeOnYetiGraph($hairNode,"motion");
+			string $scraggles[] = GET_NodesByTypeOnYetiGraph($hairNode,"scraggle");
+			string $shaders[] = GET_NodesByTypeOnYetiGraph($hairNode,"shader");
+			string $switchs[] = GET_NodesByTypeOnYetiGraph($hairNode,"switch");
+			string $textures[] = GET_NodesByTypeOnYetiGraph($hairNode,"texture");
+			string $transforms[] = GET_NodesByTypeOnYetiGraph($hairNode,"transform");
+			string $widths[] = GET_NodesByTypeOnYetiGraph($hairNode,"width");
+			
+			if(size($imports)>0)
+			{
+				string $importGeometry[];
+				string $importGroom[];
+				string $importGuide[];
+				string $importFeather[];
+				string $importBraid[];
+				
+				int $idxGeometry = 0;
+				int $idxGroom = 0;
+				int $idxGuide = 0;
+				int $idxFeather = 0;
+				int $idxBraid = 0;
+				
+				for($i=0;$i<size($imports);$i++)
+				{
+					int $idxTarget = GET_INT_ParameterValueOfNodeOnYetiGraph($hairNode, $imports[$i], "type");
+					
+					if($idxTarget == 0)
+					{
+						$importGeometry[$idxGeometry] = $imports[$i];
+						$idxGeometry++;
+					}
+					else if($idxTarget == 1)
+					{
+						$importGroom[$idxGroom] = $imports[$i];
+						$idxGroom++;
+					}
+					else if($idxTarget == 2)
+					{
+						$importGuide[$idxGuide] = $imports[$i];
+						$idxGuide++;
+					}
+					else if($idxTarget == 3)
+					{
+						$importFeather[$idxFeather] = $imports[$i];
+						$idxFeather++;
+					}
+					else if($idxTarget == 4)
+					{
+						$importBraid[$idxBraid] = $imports[$i];
+						$idxBraid++;
+					}
+				}
+				
+				if(size($importGeometry)>0){ CAP_YetiRenamer_Rename_Processor($importGeometry, `textField -q -text tfRenameImportGeometry`); clear $importGeometry;};
+				if(size($importGroom)>0){ CAP_YetiRenamer_Rename_Processor($importGroom, `textField -q -text tfRenameImportGroom`); clear $importGroom;};
+				if(size($importGuide)>0){ CAP_YetiRenamer_Rename_Processor($importGuide, `textField -q -text tfRenameImportGuide`); clear $importGuide;};
+				if(size($importFeather)>0){ CAP_YetiRenamer_Rename_Processor($importFeather, `textField -q -text tfRenameImportFeather`); clear $importFeather;};
+				if(size($importBraid)>0){ CAP_YetiRenamer_Rename_Processor($importBraid, `textField -q -text tfRenameImportBraid`); clear $importBraid;};
+			};			
+			if(size($references)>0){ CAP_YetiRenamer_Rename_Processor($references, `textField -q -text tfRenameReference`); clear $references;};
+			if(size($files)>0){ CAP_YetiRenamer_Rename_Processor($files, `textField -q -text tfRenameFile`); clear $files;};
+			if(size($scatters)>0){ CAP_YetiRenamer_Rename_Processor($scatters, `textField -q -text tfRenameScatter`); clear $scatters;};
+			if(size($grows)>0){ CAP_YetiRenamer_Rename_Processor($grows, `textField -q -text tfRenameGrow`); clear $grows;};
+			if(size($instances)>0){ CAP_YetiRenamer_Rename_Processor($instances, `textField -q -text tfRenameInstance`); clear $instances;};			
+			if(size($attributes)>0){ CAP_YetiRenamer_Rename_Processor($attributes, `textField -q -text tfRenameAttribute`); clear $attributes;};
+			if(size($bends)>0){ CAP_YetiRenamer_Rename_Processor($bends, `textField -q -text tfRenameBend`); clear $bends;};
+			if(size($blends)>0){ CAP_YetiRenamer_Rename_Processor($blends, `textField -q -text tfRenameBlend`); clear $blends;};
+			if(size($clumpings)>0){ CAP_YetiRenamer_Rename_Processor($clumpings, `textField -q -text tfRenameClumping`); clear $clumpings;};
+			if(size($combs)>0){ CAP_YetiRenamer_Rename_Processor($combs, `textField -q -text tfRenameComb`); clear $combs;};			
+			if(size($converts)>0){ CAP_YetiRenamer_Rename_Processor($converts, `textField -q -text tfRenameConvert`); clear $converts;};
+			if(size($curls)>0){ CAP_YetiRenamer_Rename_Processor($curls, `textField -q -text tfRenameCurl`); clear $curls;};
+			if(size($directions)>0){ CAP_YetiRenamer_Rename_Processor($directions, `textField -q -text tfRenameDirection`); clear $directions;};
+			if(size($displacements)>0){ CAP_YetiRenamer_Rename_Processor($displacements, `textField -q -text tfRenameDisplacement`); clear $displacements;};
+			if(size($groups)>0){ CAP_YetiRenamer_Rename_Processor($groups, `textField -q -text tfRenameGroup`); clear $groups;};			
+			if(size($guides)>0){ CAP_YetiRenamer_Rename_Processor($guides, `textField -q -text tfRenameGuide`); clear $guides;};
+			if(size($merges)>0){ CAP_YetiRenamer_Rename_Processor($merges, `textField -q -text tfRenameMerge`); clear $merges;};
+			if(size($motions)>0){ CAP_YetiRenamer_Rename_Processor($motions, `textField -q -text tfRenameMotion`); clear $motions;};
+			if(size($scraggles)>0){ CAP_YetiRenamer_Rename_Processor($scraggles, `textField -q -text tfRenameScraggle`); clear $scraggles;};
+			if(size($shaders)>0){ CAP_YetiRenamer_Rename_Processor($shaders, `textField -q -text tfRenameShader`); clear $shaders;};			
+			if(size($switchs)>0){ CAP_YetiRenamer_Rename_Processor($switchs, `textField -q -text tfRenameSwitch`); clear $switchs;};
+			if(size($textures)>0){ CAP_YetiRenamer_Rename_Processor($textures, `textField -q -text tfRenameTexture`); clear $textures;};
+			if(size($transforms)>0){ CAP_YetiRenamer_Rename_Processor($transforms, `textField -q -text tfRenameTransform`); clear $transforms;};
+			if(size($widths)>0){ CAP_YetiRenamer_Rename_Processor($widths, `textField -q -text tfRenameWidth`); clear $widths;};
+		}
+	}
+}
+
+global proc CAP_YetiRenamer_Rename_Processor(string $currentName[], string $typeName)
+{ 
+	int $formatIndex = 0;
+	int $number = 0;	
+	string $hairNode = "";
+	string $MenuValue = "";
+	string $nameDefault = "";
+	string $namePrefix = "";
+	string $nameSuffix = "";
+	string $nameSeparator = "";	
+	string $newPrefix ="";
+	string $newSuffix ="";
+	string $newName = "";
+	string $addZero = "";
+	
+	$hairNode = `textField -q -text tfHairNode`;
+	$MenuValue = `optionMenu -q -v omHairRenameFormat`;
+	$nameDefault = `textField -q -text tfHairName`;
+	$namePrefix = `textField -q -text tfHairPrefix`;
+	$nameSuffix = `textField -q -text tfHairSuffix`;
+	$nameSeparator = `textField -q -text tfHairSeparator`;
+		
+	if($MenuValue == "prefix_name_##_nodetype_suffix"){$formatIndex = 0;}
+	else if($MenuValue == "prefix_name_nodetype_##_suffix"){$formatIndex = 1;}	
+	
+	if($namePrefix != ""){$newPrefix = $namePrefix + $nameSeparator;}
+	if($nameSuffix != ""){$newSuffix = $nameSeparator + $nameSuffix;}
+	
+	if(size($currentName) == 1)
+	{	
+		$newName = "";
+		$newName = $newPrefix + $nameDefault + $nameSeparator + $typeName + $newSuffix;
+		
+		if($currentName[0] != $newName){ SET_RenameNodeByTypeOnYetiGraph($hairNode, $currentName[0], $newName); }
+	}
+	else
+	{
+		$number = 0;
+		
+		for($i=0;$i<size($currentName);$i++)
+		{
+			$number++;
+			$addZero = "";
+			$newName = "";
+			
+			for ($j=1; $j < 2; $j++)
+	    	{
+				if ($number < pow(10, $j) )
+					$addZero += "0";
+		    }
+			
+			if($formatIndex == 0){$newName = $newPrefix + $nameDefault + $nameSeparator + $addZero + $number + $nameSeparator+ $typeName + $newSuffix;}
+			else if($formatIndex == 1){$newName = $newPrefix + $nameDefault + $nameSeparator+ $typeName + $nameSeparator + $addZero + $number + $newSuffix;}			
+			
+			if($currentName[$i] != $newName){ SET_RenameNodeByTypeOnYetiGraph($hairNode, $currentName[$i], $newName); }
+		}
+	}
+	
+	clear $currentName;
+}
+
+global proc CAP_YetiRenamer_SelectYetiNode()
+{
+	if(`window -q -exists CAP_YetiRenamer_SelectYetiNode_Popup_Window`)  deleteUI CAP_YetiRenamer_SelectYetiNode_Popup_Window;
+
+	string $setTarget = "";
+	$setTarget = `textField -q -text tfHairNode`;
+	
+	string $Objects[] = GET_ListOfSelectedObject();
+	
+	if(size($Objects) > 0)
+	{
+		string $objType = GET_ObjectType($Objects[0]);
+		if($objType == "pgYetiMaya")
+		{
+			$setTarget = $Objects[0];
+			textField -e -text $setTarget tfHairNode;
+		}
+		else
+		{
+			string $GetList[] = GET_ListOfYetiNode();
+		
+			if(size($GetList) > 0)
+			{
+				CAP_YetiRenamer_SelectYetiNode_Popup();
+			}
+			else
+			{
+				$setTarget = "";
+				textField -e -text $setTarget tfHairNode;
+			}
+		}
+	}
+	else
+	{
+		string $GetList[] = GET_ListOfYetiNode();
+		
+		if(size($GetList) > 0)
+		{
+			CAP_YetiRenamer_SelectYetiNode_Popup();
+		}
+		else
+		{
+			$setTarget = "";
+			textField -e -text $setTarget tfHairNode;
+		}
+	}	
+}
+
+global proc CAP_YetiRenamer_SelectYetiNode_Popup()
+{
+	if(`window -q -exists CAP_YetiRenamer_SelectYetiNode_Popup_Window`)  deleteUI CAP_YetiRenamer_SelectYetiNode_Popup_Window;
+	
+    window -s 1 -title "SELECT A YETINODE FOR TARGET" -maximizeButton 0 -minimizeButton 0 -rtf true CAP_YetiRenamer_SelectYetiNode_Popup_Window;
+	
+	frameLayout -label "SELECT YETINODE"  -bgc 0.25 0.25 0.25 -fn "tinyBoldLabelFont" ;
+		
+	optionMenu -label "Yetinode List : " -changeCommand "CAP_YetiRenamer_SelectYetiNode_Popup_Process" OptionMenuSelectAYetiNode;
+	
+	setParent..;
+	
+	showWindow;
+	
+	string $GetList[] = GET_ListOfYetiNode();		
+		
+	for($i=0;$i<size($GetList);$i++)
+	{
+		string $itemName = string($i);
+		menuItem -label $GetList[$i] -parent OptionMenuSelectAYetiNode $itemName;
+	}	
+}
+
+global proc CAP_YetiRenamer_SelectYetiNode_Popup_Process()
+{
+	string $MenuValue = `optionMenu -q -v OptionMenuSelectAYetiNode`;
+	
+	textField -e -text $MenuValue tfHairNode;
+}
+
+//---------------------------------------------------------------------------------------------------------------
+global proc CAP_GuideTool_GetAttributes()
+{
+    string $Objects[] = GET_ListOfSelectedObject();
+	
+	if(size($Objects) > 0)
+	{
+		float $value = 0;
+		string $getShapes[] = `listRelatives -shapes $Objects[0]`;
+		if (`attributeExists "weight" $getShapes[0]`) 
+		{
+			float $value = `getAttr ($getShapes[0] + ".weight")`; 
+			floatSliderGrp -e -value $value sliderWeightVal;
+		}	
+		if (`attributeExists "lengthWeight" $getShapes[0]`) 
+		{
+			float $value = `getAttr ($getShapes[0] + ".lengthWeight")`; 
+			floatSliderGrp -e -value $value sliderLengthWeightVal;
+		}			
+		if (`attributeExists "innerRadius" $getShapes[0]`) 
+		{
+			float $value = `getAttr ($getShapes[0] + ".innerRadius")`; 
+			floatSliderGrp -e -value $value sliderInnerRadiusVal;
+		}			
+		if (`attributeExists "outerRadius" $getShapes[0]`) 
+		{
+			float $value = `getAttr ($getShapes[0] + ".outerRadius")`; 
+			floatSliderGrp -e -value $value sliderOuterRadiusVal;
+		}			
+		if (`attributeExists "density" $getShapes[0]`) 
+		{
+			float $value = `getAttr ($getShapes[0] + ".density")`; 
+			floatSliderGrp -e -value $value sliderDensityVal;
+		}			
+		if (`attributeExists "baseAttraction" $getShapes[0]`) 
+		{
+			float $value = `getAttr ($getShapes[0] + ".baseAttraction")`; 
+			floatSliderGrp -e -value $value sliderBaseAttractionVal;
+		}			
+		if (`attributeExists "tipAttraction" $getShapes[0]`) 
+		{
+			float $value = `getAttr ($getShapes[0] + ".tipAttraction")`; 
+			floatSliderGrp -e -value $value sliderTipAttractionVal;
+		}			
+		if (`attributeExists "attractionBias" $getShapes[0]`) 
+		{
+			float $value = `getAttr ($getShapes[0] + ".attractionBias")`; 
+			floatSliderGrp -e -value $value sliderAttractionBiasVal;
+		}			
+		if (`attributeExists "randomAttraction" $getShapes[0]`) 
+		{
+			float $value = `getAttr ($getShapes[0] + ".randomAttraction")`; 
+			floatSliderGrp -e -value $value sliderRandomAttractionVal;
+		}			
+		if (`attributeExists "twist" $getShapes[0]`) 
+		{
+			float $value = `getAttr ($getShapes[0] + ".twist")`; 
+			floatSliderGrp -e -value $value sliderTwistVal;
+		}	
+	}
+};
+
+global proc CAP_GuideTool_Reset()
+{
+	floatSliderGrp -e -value 1.000 sliderWeightVal;
+	floatSliderGrp -e -value 1.000 sliderLengthWeightVal;
+	floatSliderGrp -e -value 0.000 sliderInnerRadiusVal;
+	floatSliderGrp -e -value 2.000 sliderOuterRadiusVal;
+	floatSliderGrp -e -value 1.000 sliderDensityVal;
+	floatSliderGrp -e -value 0.000 sliderBaseAttractionVal;
+	floatSliderGrp -e -value 0.000 sliderTipAttractionVal;
+	floatSliderGrp -e -value 0.000 sliderAttractionBiasVal;
+	floatSliderGrp -e -value 0.000 sliderRandomAttractionVal;
+	floatSliderGrp -e -value 0.000 sliderTwistVal;
+};
+
+global proc CAP_GuideTool_Apply()
+{
+    float $s_Weight = `floatSliderGrp -q -value sliderWeightVal`;  
+    float $s_LengthWeight = `floatSliderGrp -q -value sliderLengthWeightVal`;  
+    float $s_InnerRadius = `floatSliderGrp -q -value sliderInnerRadiusVal`;    
+    float $s_OuterRadius = `floatSliderGrp -q -value sliderOuterRadiusVal`;    
+    float $s_Density = `floatSliderGrp -q -value sliderDensityVal`;    
+    float $s_BaseAttraction = `floatSliderGrp -q -value sliderBaseAttractionVal`;  
+    float $s_TipAttraction = `floatSliderGrp -q -value sliderTipAttractionVal`;    
+    float $s_AttractionBias = `floatSliderGrp -q -value sliderAttractionBiasVal`; 
+    float $s_RandomAttraction = `floatSliderGrp -q -value sliderRandomAttractionVal`; 
+    float $s_Twist = `floatSliderGrp -q -value sliderTwistVal`;    
+   
+    string $Objects[] = GET_ListOfSelectedObject();
+	
+	if(size($Objects) > 0)
+	{
+		for($Item in $Objects)
+		{
+			string $getShapes[] = `listRelatives -shapes $Item`;
+			if (`attributeExists "weight" $getShapes[0]`) { setAttr ($getShapes[0] + ".weight") ($s_Weight); }
+			if (`attributeExists "lengthWeight" $getShapes[0]`) { setAttr ($getShapes[0] + ".lengthWeight") ($s_LengthWeight); }
+			if (`attributeExists "innerRadius" $getShapes[0]`) { setAttr ($getShapes[0] + ".innerRadius") ($s_InnerRadius); }
+			if (`attributeExists "outerRadius" $getShapes[0]`) { setAttr ($getShapes[0] + ".outerRadius") ($s_OuterRadius); }
+			if (`attributeExists "density" $getShapes[0]`) { setAttr ($getShapes[0] + ".density") ($s_Density); }
+			if (`attributeExists "baseAttraction" $getShapes[0]`) { setAttr ($getShapes[0] + ".baseAttraction") ($s_BaseAttraction); }
+			if (`attributeExists "tipAttraction" $getShapes[0]`) { setAttr ($getShapes[0] + ".tipAttraction") ($s_TipAttraction); }
+			if (`attributeExists "attractionBias" $getShapes[0]`) { setAttr ($getShapes[0] + ".attractionBias") ($s_AttractionBias); }
+			if (`attributeExists "randomAttraction" $getShapes[0]`) { setAttr ($getShapes[0] + ".randomAttraction") ($s_RandomAttraction); }
+			if (`attributeExists "twist" $getShapes[0]`) { setAttr ($getShapes[0] + ".twist") ($s_Twist); }
+		}
+	}
+};
+
+//---------------------------------------------------------------------------------------------------------------
+global proc CAP_SetTool_CreateSet()
+{
+	string $valueContent = "";
+	$valueContent = `textField -q -text textFieldSetName`;
+	string $NewSet = `sets -name $valueContent`;
+}
+
+global proc CAP_SetTool_SelectTargetSet()
+{
+	if(`window -q -exists CAP_SetTool_SelectTargetSet_Popup_Window`)  deleteUI CAP_SetTool_SelectTargetSet_Popup_Window;
+
+	string $setTarget = "";
+	$setTarget = `textField -q -text textFieldSetTargetName`;
+	
+	string $Objects[] = GET_ListOfSelectedObject();
+	
+	if(size($Objects) > 0)
+	{
+		string $objType = GET_ObjectType($Objects[0]);
+		if($objType == "objectSet")
+		{
+			$setTarget = $Objects[0];
+			textField -e -text $setTarget textFieldSetTargetName;
+		}
+		else
+		{
+			string $GetList[] = GET_ListOfObjectSet();
+		
+			if(size($GetList) > 0)
+			{
+				CAP_SetTool_SelectTargetSet_Popup();
+			}
+			else
+			{
+				$setTarget = "";
+				textField -e -text $setTarget textFieldSetTargetName;
+			}
+		}
+	}
+	else
+	{
+		string $GetList[] = GET_ListOfObjectSet();
+		
+		if(size($GetList) > 0)
+		{
+			CAP_SetTool_SelectTargetSet_Popup();
+		}
+		else
+		{
+			$setTarget = "";
+			textField -e -text $setTarget textFieldSetTargetName;
+		}
+	}	
+}
+
+global proc CAP_SetTool_SelectTargetSet_Popup()
+{
+	if(`window -q -exists CAP_SetTool_SelectTargetSet_Popup_Window`)  deleteUI CAP_SetTool_SelectTargetSet_Popup_Window;
+	
+    window -s 1 -title "SELECT A SET FOR TARGET" -maximizeButton 0 -minimizeButton 0 -rtf true CAP_SetTool_SelectTargetSet_Popup_Window;
+	
+	frameLayout -label "SELECT A SET FOR TARGET"  -bgc 0.25 0.25 0.25 -fn "tinyBoldLabelFont" ;
+		
+	optionMenu -label "Set List : " -changeCommand "CAP_SetTool_SelectTargetSet_Popup_Process" OptionMenuSelectASet;
+	
+	setParent..;
+	
+	showWindow;
+	
+	string $GetList[] = GET_ListOfObjectSet();		
+		
+	for($i=0;$i<size($GetList);$i++)
+	{
+		string $itemName = string($i);
+		menuItem -label $GetList[$i] -parent OptionMenuSelectASet $itemName;
+	}	
+}
+
+global proc CAP_SetTool_SelectTargetSet_Popup_Process()
+{
+	string $MenuValue = `optionMenu -q -v OptionMenuSelectASet`;
+	
+	textField -e -text $MenuValue textFieldSetTargetName;
+}
+
+global proc CAP_SetTool_HighlightTargetSet()
+{
+	string $setTarget = "";
+	$setTarget = `textField -q -text textFieldSetTargetName`;
+	
+	if($setTarget != "")
+	{
+		string $checkType = GET_ObjectType($setTarget);
+		
+		if($checkType != "objectSet")
+		{
+			string $GetList[] = GET_ListOfObjectSet();
+			
+			if(size($GetList) > 0)
+			{
+				CAP_SetTool_SelectTargetSet_Popup();
+			}
+			else
+			{
+				$setTarget = "";
+				textField -e -text $setTarget textFieldSetTargetName;
+			}
+		}
+		else
+		{
+			if($setTarget != "")
+			{
+				select $setTarget;
+			}
+		}
+	}	
+	else
+	{
+		CAP_SetTool_SelectTargetSet_Popup();
+	}
+}
+
+global proc CAP_SetTool_AddSelectedObjects()
+{
+	string $setTarget = "";
+	$setTarget = `textField -q -text textFieldSetTargetName`;
+	
+	if($setTarget != "")
+	{
+		string $checkType = GET_ObjectType($setTarget);
+		
+		if($checkType != "objectSet")
+		{
+			string $GetList[] = GET_ListOfObjectSet();
+			
+			if(size($GetList) > 0)
+			{
+				CAP_SetTool_SelectTargetSet_Popup();
+			}
+			else
+			{
+				$setTarget = "";
+				textField -e -text $setTarget textFieldSetTargetName;
+			}
+		}
+		else
+		{
+			string $Objects[] = GET_ListOfSelectedObject();
+		
+			if(size($Objects) > 0)
+			{
+				string $ObjectToAdd[];
+				int $index = 0;
+				
+				for($i=0;$i<size($Objects);$i++)
+				{
+					if($Objects[$i] != $setTarget)
+					{
+						$ObjectToAdd[$index] = $Objects[$i];
+						$index++;
+					}
+				}
+				
+				if(size($ObjectToAdd) > 0)
+				{
+					sets -edit -add $setTarget $ObjectToAdd;
+				}			
+			}	
+		}			
+	}
+	else
+	{
+		CAP_SetTool_SelectTargetSet_Popup();
+	}
+}
+
+global proc CAP_SetTool_RemoveSelectedObjects()
+{
+	string $setTarget = "";
+	$setTarget = `textField -q -text textFieldSetTargetName`;
+	
+	if($setTarget != "")
+	{
+		string $checkType = GET_ObjectType($setTarget);
+		
+		if($checkType != "objectSet")
+		{
+			string $GetList[] = GET_ListOfObjectSet();
+			
+			if(size($GetList) > 0)
+			{
+				CAP_SetTool_SelectTargetSet_Popup();
+			}
+			else
+			{
+				$setTarget = "";
+				textField -e -text $setTarget textFieldSetTargetName;
+			}
+		}
+		else
+		{
+			string $Objects[] = GET_ListOfSelectedObject();
+			
+			if(size($Objects)>0)
+			{
+				sets -edit -rm $setTarget $Objects;
+			}
+		}		
+	}
+	else
+	{
+		CAP_SetTool_SelectTargetSet_Popup();
+	}
+}
+
+global proc CAP_SetTool_RemoveSelectedObjectFromList()
+{
+	string $selectedObject = "";
+	
+	$selectedObject = GET_SelectedObject();
+	
+	if($selectedObject != "")
+	{ 
+		string $setList[] = GET_ListOfSets();		
+		
+		if(size($setList)==1)
+		{
+			if(`window -q -exists CAP_RemoveFromSetList_Window`)  deleteUI CAP_RemoveFromSetList_Window;
+			sets -edit -rm $setList[0] $selectedObject;
+		}
+		else if(size($setList)>1)
+		{
+			CAP_SetTool_RemoveSelectedObjectFromList_Popup();
+		}
+	}
+};
+
+global proc CAP_SetTool_RemoveSelectedObjectFromList_Popup()
+{
+	if(`window -q -exists CAP_RemoveFromSetList_Window`)  deleteUI CAP_RemoveFromSetList_Window;
+	
+	string $selectedObject = "";
+	
+	$selectedObject = GET_SelectedObject();
+	
+	if($selectedObject == "")
+	{ 
+		$selectedObject = "Selected object : [ none ]"; 
+	}
+	else
+	{
+		string $titleName = "Object To Remove From Set List (s) [ "+$selectedObject+" ]";
+		$selectedObject = $titleName;
+	}
+   
+    window -s 1 -title "REMOVE OBJECT FROM SET" -maximizeButton 0 -minimizeButton 0 -rtf true CAP_RemoveFromSetList_Window;
+	
+	frameLayout -label $selectedObject  -bgc 0.25 0.25 0.25 -fn "tinyBoldLabelFont" ;
+	
+	optionMenu -label "Set List : " -changeCommand "CAP_SetTool_RemoveSelectedObjectFromList_Popup_Process" objectSetListToRemove;
+	
+	setParent..;
+	
+	showWindow;
+	
+	if($selectedObject != "")
+	{
+		string $myList[] = GET_ListOfSets();		
+		
+		for($i=0;$i<size($myList);$i++)
+		{
+			string $itemName = string($i);
+			menuItem -label $myList[$i] -parent objectSetListToRemove $itemName;
+		}
+	}	
+}
+
+global proc CAP_SetTool_RemoveSelectedObjectFromList_Popup_Process()
+{
+	string $selectedObject = "";
+	
+	$selectedObject = GET_SelectedObject();
+	
+	string $MenuValue = `optionMenu -q -v objectSetListToRemove`;
+	
+	sets -edit -rm $MenuValue $selectedObject;
+	
+	//-----
+	if($selectedObject != "")
+	{ 
+		string $setList[] = GET_ListOfSets();		
+		
+		if(size($setList)>0)
+		{
+			if(`window -q -exists CAP_RemoveFromSetList_Window`)  deleteUI CAP_RemoveFromSetList_Window;
+			CAP_SetTool_RemoveSelectedObjectFromList_Popup();
+		}
+		else 
+		{
+			if(`window -q -exists CAP_RemoveFromSetList_Window`)  deleteUI CAP_RemoveFromSetList_Window;
+		}
+	}
+}
+
+global proc CAP_SetTool_SelectSetListOfSelectedObject()
+{
+	string $selectedObject = "";
+	
+	$selectedObject = GET_SelectedObject();
+	
+	if($selectedObject != "")
+	{ 
+		string $myList[] = GET_ListOfSets();		
+		
+		if(size($myList)==1)
+		{
+			if(`window -q -exists CAP_SetList_Window`)  deleteUI CAP_SetList_Window;
+			select $myList[0];
+		}
+		else if(size($myList)>1)
+		{
+			CAP_SetTool_SelectSetListOfSelectedObject_Popup();
+		}
+	}
+};
+
+global proc CAP_SetTool_SelectSetListOfSelectedObject_Popup()
+{
+	if(`window -q -exists CAP_SetList_Window`)  deleteUI CAP_SetList_Window;
+	
+	string $selectedObject = "";
+	
+	$selectedObject = GET_SelectedObject();
+	
+	if($selectedObject == "")
+	{ 
+		$selectedObject = "Selected object : [ none ]"; 
+	}
+	else
+	{
+		string $titleName = "Set list of [ "+$selectedObject+" ]";
+		$selectedObject = $titleName;
+	}
+   
+    window -s 1 -title "Set List Of Selected Object" -maximizeButton 0 -minimizeButton 0 -rtf true CAP_SetList_Window;
+	
+	frameLayout -label $selectedObject  -bgc 0.25 0.25 0.25 -fn "tinyBoldLabelFont" ;
+	
+	optionMenu -label "Set List : " -changeCommand "select #1" objectSetList;
+	
+	setParent..;
+	
+	showWindow;
+	
+	if($selectedObject != "")
+	{
+		string $myList[] = GET_ListOfSets();		
+		
+		for($i=0;$i<size($myList);$i++)
+		{
+			string $itemName = string($i);
+			menuItem -label $myList[$i] -parent objectSetList $itemName;
+		}
+	}	
+}
+//---------------------------------------------------------------------------------------------------------------
+global proc CAP_UVTexture_3DPaintools()
+{
+	Art3dPaintToolOptions();
+}; 
+
+global proc CAP_UVTexture_OpenUVEditor()
+{
+	TextureViewWindow();
+};
+
+global proc CAP_UVTexture_OpenUVSetEditor()
+{
+	UVSetEditor();
+}; 
+
+global proc CAP_UVTexture_CutUV()
+{
+	polyPerformAction polyMapCut e 0;
+}; 
+
+global proc CAP_UVTexture_SewUV()
+{
+	polyPerformAction polyMapSew e 0;
+};
+
+global proc CAP_UVTexture_SplitUV()
+{
+	polySplitTextureUV();
+};
+
+global proc CAP_UVTexture_Unfold()
+{
+	performUnfold 1;
+};
+
+global proc CAP_UVTexture_Optimize()
+{
+	OptimzeUVsOptions();
+};
+//---------------------------------------------------------------------------------------------------------------
+global proc CAP_YetiNode_GetAttributes()
+{
+	string $Objects[] = GET_ListOfSelectedObject();
+	
+	if(size($Objects) > 0)
+	{
+		float $value = 0;
+		string $getShapes[] = `listRelatives -shapes $Objects[0]`;
+		if (`attributeExists "displayOutput" $getShapes[0]`) 
+		{
+			float $value = `getAttr ($getShapes[0] + ".displayOutput")`; 
+			checkBoxGrp -e -value1 $value checkDisplayOutput;
+		}	
+		if (`attributeExists "viewportDensity" $getShapes[0]`) 
+		{
+			float $value = `getAttr ($getShapes[0] + ".viewportDensity")`; 
+			floatSliderGrp -e -value $value sliderViewportDensityVal;
+		}	
+		if (`attributeExists "viewportLength" $getShapes[0]`) 
+		{
+			float $value = `getAttr ($getShapes[0] + ".viewportLength")`; 
+			floatSliderGrp -e -value $value sliderViewportLengthVal;
+		}	
+		if (`attributeExists "viewportWidth" $getShapes[0]`) 
+		{
+			float $value = `getAttr ($getShapes[0] + ".viewportWidth")`; 
+			floatSliderGrp -e -value $value sliderViewportWidthVal;
+		}	
+		if (`attributeExists "renderDensity" $getShapes[0]`) 
+		{
+			float $value = `getAttr ($getShapes[0] + ".renderDensity")`; 
+			floatSliderGrp -e -value $value sliderRenderDensityVal;
+		}	
+		if (`attributeExists "renderLength" $getShapes[0]`) 
+		{
+			float $value = `getAttr ($getShapes[0] + ".renderLength")`; 
+			floatSliderGrp -e -value $value sliderRenderLengthVal;
+		}	
+		if (`attributeExists "renderWidth" $getShapes[0]`) 
+		{
+			float $value = `getAttr ($getShapes[0] + ".renderWidth")`; 
+			floatSliderGrp -e -value $value sliderRenderWidthVal;
+		}
+	}
+}
+
+global proc CAP_YetiNode_Reset()
+{
+	checkBoxGrp -e -value1 1 checkDisplayOutput;
+	floatSliderGrp -e -value 0.100 sliderViewportDensityVal;
+	floatSliderGrp -e -value 1.000 sliderViewportLengthVal;
+	floatSliderGrp -e -value 1.000 sliderViewportWidthVal;
+	floatSliderGrp -e -value 10.000 sliderRenderDensityVal;
+	floatSliderGrp -e -value 1.000 sliderRenderLengthVal;
+	floatSliderGrp -e -value 1.000 sliderRenderWidthVal;
+}
+
+global proc CAP_YetiNode_Apply()
+{
+	float $s_DisplayOutput = `checkBoxGrp -q -value1 checkDisplayOutput`;  
+    float $s_ViewportDensity = `floatSliderGrp -q -value sliderViewportDensityVal`;  
+    float $s_ViewportLength = `floatSliderGrp -q -value sliderViewportLengthVal`;    
+    float $s_ViewportWidth = `floatSliderGrp -q -value sliderViewportWidthVal`;    
+    float $s_RenderDensity = `floatSliderGrp -q -value sliderRenderDensityVal`;    
+    float $s_RenderLength = `floatSliderGrp -q -value sliderRenderLengthVal`;  
+    float $s_RenderWidth = `floatSliderGrp -q -value sliderRenderWidthVal`; 
+   
+    string $Objects[] = GET_ListOfSelectedObject();
+	
+	if(size($Objects) > 0)
+	{
+		for($Item in $Objects)
+		{
+			string $getShapes[] = `listRelatives -shapes $Item`;
+			if (`attributeExists "displayOutput" $getShapes[0]`) { setAttr ($getShapes[0] + ".displayOutput") ($s_DisplayOutput); }
+			if (`attributeExists "viewportDensity" $getShapes[0]`) { setAttr ($getShapes[0] + ".viewportDensity") ($s_ViewportDensity); }
+			if (`attributeExists "viewportLength" $getShapes[0]`) { setAttr ($getShapes[0] + ".viewportLength") ($s_ViewportLength); }
+			if (`attributeExists "viewportWidth" $getShapes[0]`) { setAttr ($getShapes[0] + ".viewportWidth") ($s_ViewportWidth); }
+			if (`attributeExists "renderDensity" $getShapes[0]`) { setAttr ($getShapes[0] + ".renderDensity") ($s_RenderDensity); }
+			if (`attributeExists "renderLength" $getShapes[0]`) { setAttr ($getShapes[0] + ".renderLength") ($s_RenderLength); }
+			if (`attributeExists "renderWidth" $getShapes[0]`) { setAttr ($getShapes[0] + ".renderWidth") ($s_RenderWidth); }
+		}
+	}
+}
+//---------------------------------------------------------------------------------------------------------------
+global proc string[] GET_ListOfSelectedObject()
+{
+	return `ls -selection`;
+}
+
+global proc string[] GET_ListOfObjectSet()
+{
+	return `ls -type objectSet`;
+}
+
+global proc string[] GET_ListOfDisplayLayer()
+{
+	return `ls -type displayLayer`;
+}
+
+global proc string[] GET_ListOfYetiNode()
+{
+	return `ls -type pgYetiMaya`;
+}
+
+global proc string GET_ObjectType(string $selection)
+{
+	return `nodeType $selection`;
+}
+
+global proc string GET_SelectedObject()
+{
+	string $selectedObject = "";
+    string $Objects[] = GET_ListOfSelectedObject();
+    
+    for($i=0;$i<size($Objects);$i++)
+    {
+        $selectedObject = $Objects[$i];
+    }
+	
+	return $selectedObject;
+}
+
+global proc string[] GET_ListOfSets()
+{
+    string $selectedObject = "";
+	
+	$selectedObject = GET_SelectedObject();	
+    
+    return `listSets -object $selectedObject`;
+}
+
+global proc string[] GET_NodesByTypeOnYetiGraph(string $yetiNodeName, string $nodeType)
+{
+	return `pgYetiGraph -listNodes -type $nodeType $yetiNodeName`;	
+}
+
+global proc int GET_INT_ParameterValueOfNodeOnYetiGraph(string $yetiNodeName, string $nodeName, string $paramName)
+{
+	return `pgYetiGraph -node $nodeName -param $paramName -getParamValue $yetiNodeName`;
+}
+
+global proc SET_RenameNodeByTypeOnYetiGraph(string $yetiNodeName, string $currentName, string $newName)
+{
+	pgYetiGraph -node $currentName -rename $newName $yetiNodeName;
+}
+
+global proc string[] GET_AllNodesOnYetiGraph(string $yetiNodeName)
+{
+	return `pgYetiGraph -listNodes $yetiNodeName`;	
+}
