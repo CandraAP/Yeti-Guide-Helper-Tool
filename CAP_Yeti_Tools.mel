@@ -116,7 +116,7 @@ global proc CAP_Yeti_Tools()
 						text -al "left" -label "  Import (Feather)"; textField -text "ifeather" -bgc 0.2 0.2 0.2 tfRenameImportFeather;
 						text -al "left" -label "  Import (Braid)"; textField -text "ibraid" -bgc 0.2 0.2 0.2 tfRenameImportBraid;	
 						text -al "left" -label "  Reference"; textField -text "reference" -bgc 0.2 0.2 0.2 tfRenameReference;
-						text -al "left" -label "  File"; textField -text "file" -bgc 0.2 0.2 0.2 tfRenameFile;
+						//text -al "left" -label "  File"; textField -text "file" -bgc 0.2 0.2 0.2 tfRenameFile;
 						text -al "left" -label "  Scatter"; textField -text "scatter" -bgc 0.2 0.2 0.2 tfRenameScatter;	
 						text -al "left" -label "  Grow"; textField -text "grow" -bgc 0.2 0.2 0.2 tfRenameGrow;	
 						text -al "left" -label "  Instance"; textField -text "instance" -bgc 0.2 0.2 0.2 tfRenameInstance;	
@@ -135,7 +135,7 @@ global proc CAP_Yeti_Tools()
 						text -al "left" -label "  Motion"; textField -text "motion" -bgc 0.2 0.2 0.2 tfRenameMotion;
 						text -al "left" -label "  Scraggle"; textField -text "scraggle" -bgc 0.2 0.2 0.2 tfRenameScraggle;
 						text -al "left" -label "  Shader"; textField -text "shader" -bgc 0.2 0.2 0.2 tfRenameShader;
-						text -al "left" -label "  Switch"; textField -text "switch" -bgc 0.2 0.2 0.2 tfRenameSwitch;
+						//text -al "left" -label "  Switch"; textField -text "switch" -bgc 0.2 0.2 0.2 tfRenameSwitch;
 						text -al "left" -label "  Texture"; textField -text "texture" -bgc 0.2 0.2 0.2 tfRenameTexture;
 						text -al "left" -label "  Transform"; textField -text "transform" -bgc 0.2 0.2 0.2 tfRenameTransform;
 						text -al "left" -label "  Width"; textField -text "width" -bgc 0.2 0.2 0.2 tfRenameWidth;
@@ -290,7 +290,7 @@ global proc CAP_YetiRenamer_Rename()
 		{
 			string $imports[] = GET_NodesByTypeOnYetiGraph($hairNode,"import");
 			string $references[] = GET_NodesByTypeOnYetiGraph($hairNode,"reference");
-			string $files[] = GET_NodesByTypeOnYetiGraph($hairNode,"file");
+			//string $files[] = GET_NodesByTypeOnYetiGraph($hairNode,"file");
 			string $scatters[] = GET_NodesByTypeOnYetiGraph($hairNode,"scatter");
 			string $grows[] = GET_NodesByTypeOnYetiGraph($hairNode,"grow");
 			string $instances[] = GET_NodesByTypeOnYetiGraph($hairNode,"instance");
@@ -309,7 +309,7 @@ global proc CAP_YetiRenamer_Rename()
 			string $motions[] = GET_NodesByTypeOnYetiGraph($hairNode,"motion");
 			string $scraggles[] = GET_NodesByTypeOnYetiGraph($hairNode,"scraggle");
 			string $shaders[] = GET_NodesByTypeOnYetiGraph($hairNode,"shader");
-			string $switchs[] = GET_NodesByTypeOnYetiGraph($hairNode,"switch");
+			//string $switchs[] = GET_NodesByTypeOnYetiGraph($hairNode,"switch");
 			string $textures[] = GET_NodesByTypeOnYetiGraph($hairNode,"texture");
 			string $transforms[] = GET_NodesByTypeOnYetiGraph($hairNode,"transform");
 			string $widths[] = GET_NodesByTypeOnYetiGraph($hairNode,"width");
@@ -366,7 +366,7 @@ global proc CAP_YetiRenamer_Rename()
 				if(size($importBraid)>0){ CAP_YetiRenamer_Rename_Processor($importBraid, `textField -q -text tfRenameImportBraid`); clear $importBraid;};
 			};			
 			if(size($references)>0){ CAP_YetiRenamer_Rename_Processor($references, `textField -q -text tfRenameReference`); clear $references;};
-			if(size($files)>0){ CAP_YetiRenamer_Rename_Processor($files, `textField -q -text tfRenameFile`); clear $files;};
+			//if(size($files)>0){ CAP_YetiRenamer_Rename_Processor($files, `textField -q -text tfRenameFile`); clear $files;};
 			if(size($scatters)>0){ CAP_YetiRenamer_Rename_Processor($scatters, `textField -q -text tfRenameScatter`); clear $scatters;};
 			if(size($grows)>0){ CAP_YetiRenamer_Rename_Processor($grows, `textField -q -text tfRenameGrow`); clear $grows;};
 			if(size($instances)>0){ CAP_YetiRenamer_Rename_Processor($instances, `textField -q -text tfRenameInstance`); clear $instances;};			
@@ -385,7 +385,7 @@ global proc CAP_YetiRenamer_Rename()
 			if(size($motions)>0){ CAP_YetiRenamer_Rename_Processor($motions, `textField -q -text tfRenameMotion`); clear $motions;};
 			if(size($scraggles)>0){ CAP_YetiRenamer_Rename_Processor($scraggles, `textField -q -text tfRenameScraggle`); clear $scraggles;};
 			if(size($shaders)>0){ CAP_YetiRenamer_Rename_Processor($shaders, `textField -q -text tfRenameShader`); clear $shaders;};			
-			if(size($switchs)>0){ CAP_YetiRenamer_Rename_Processor($switchs, `textField -q -text tfRenameSwitch`); clear $switchs;};
+			//if(size($switchs)>0){ CAP_YetiRenamer_Rename_Processor($switchs, `textField -q -text tfRenameSwitch`); clear $switchs;};
 			if(size($textures)>0){ CAP_YetiRenamer_Rename_Processor($textures, `textField -q -text tfRenameTexture`); clear $textures;};
 			if(size($transforms)>0){ CAP_YetiRenamer_Rename_Processor($transforms, `textField -q -text tfRenameTransform`); clear $transforms;};
 			if(size($widths)>0){ CAP_YetiRenamer_Rename_Processor($widths, `textField -q -text tfRenameWidth`); clear $widths;};
