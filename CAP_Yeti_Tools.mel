@@ -7,7 +7,7 @@ global proc CAP_Yeti_Tools()
 		deleteUI CAP_Tool;
 	};
 	
-	window -s 1 -t "CAP's Yeti Tool v1.05" -mxb 0 -mnb 1 -rtf true CAP_Tool;
+	window -s 1 -t "CAP's Yeti Tool v1.05f1" -mxb 0 -mnb 1 -rtf true CAP_Tool;
 	tabLayout tabList;
 		// --- Yeti ---
 		string $tabYeti = `columnLayout`;
@@ -180,6 +180,9 @@ global proc CAP_Yeti_Tools()
 					frameLayout -cll 1 -cl 1 -label "DEBUGGER" -w 370  -bgc 0.25 0.25 0.25 -fn "tinyBoldLabelFont" ;
 						button -h 23  -l "DEBUG - YETI AUTO RENAMER (MEMORY NAME)" -bgc 0.2 0.2 0.2 -c "CAP_DEBUG_YetiGraphAutoRenamerMemoryName()";
 					setParent..;
+					frameLayout -cll 1 -cl 1 -label "TOOLS" -w 370  -bgc 0.25 0.25 0.25 -fn "tinyBoldLabelFont" ;
+						button -h 23  -l "Show Selected Curve Span Count" -bgc 0.2 0.2 0.2 -c "CAP_Utility_ShowSelectedCurvesSpanCount()";
+					setParent..;
 				setParent..;
 			separator -style "in";
 			setParent..;
@@ -190,7 +193,7 @@ global proc CAP_Yeti_Tools()
 		frameLayout -w 390 -label "About"  -bgc 0.25 0.25 0.25 -fn "tinyBoldLabelFont" ;
 			separator -style "in";
 			text -label "----------------------------------------------" -h 20 -al "center";									
-			text -label "CAP'S YETI TOOLS V1.05" -h 20 -al "center";									
+			text -label "CAP'S YETI TOOLS V1.05f1" -h 20 -al "center";									
 			text -label "----------------------------------------------" -h 20 -al "center";
 			text -label " " -h 20 -al "center";					
 			text -label "Created by Candra Agung Prasetyo @ 2019" -h 20 -al "center";	
@@ -1131,6 +1134,28 @@ global proc CAP_YetiNode_Apply()
 			if (`attributeExists "renderLength" $getShapes[0]`) { setAttr ($getShapes[0] + ".renderLength") ($s_RenderLength); }
 			if (`attributeExists "renderWidth" $getShapes[0]`) { setAttr ($getShapes[0] + ".renderWidth") ($s_RenderWidth); }
 		}
+	}
+}
+
+global proc CAP_Utility_ShowSelectedCurvesSpanCount()
+{
+	string $Objects[] = `ls -selection`;
+	
+	if(size($Objects) > 0)
+	{
+		print "\n----CurveSpansCount--------------------";
+		for($i=0;$i<size($Objects);$i++)
+		{
+			string $shapeName[] = `listRelatives -s $Objects[$i]`;
+			
+			if (`attributeExists "spans" $shapeName[0]`)
+			{
+				int $spansCount = `getAttr ($shapeName[0] + ".spans")`;
+				string $buildMsg = "\n"+$Objects[$i]+" : " + $spansCount;
+				print $buildMsg;
+			}
+		}		
+		print "\n---------------------------------------\n";
 	}
 }
 //---------------------------------------------------------------------------------------------------------------
